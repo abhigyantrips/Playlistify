@@ -1,24 +1,11 @@
-'use client';
+import { Metadata } from 'next';
 
-import { Button } from '@react95/core';
-import { MediaCd } from '@react95/icons';
+import LoginPageClient from '@/app/page.client';
 
-import { authClient } from '@/lib/client';
+export const metadata: Metadata = {
+  title: 'Login',
+};
 
 export default function LoginPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Button
-        className="flex items-center gap-2 !p-4"
-        onClick={async () => {
-          await authClient.signIn.social({
-            provider: 'spotify',
-          });
-        }}
-      >
-        <MediaCd variant="32x32_4" />
-        <span className="text-md font-bold">Login With Spotify</span>
-      </Button>
-    </div>
-  );
+  return <LoginPageClient />;
 }
