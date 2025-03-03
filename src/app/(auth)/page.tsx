@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import LoginPageClient from '@/app/page.client';
+import LoginPageClient from '@/app/(auth)/page.client';
 
 export const metadata: Metadata = {
   title: 'Login',
