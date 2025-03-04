@@ -13,6 +13,7 @@ export default function LoginPageClient() {
         onClick={async () => {
           await authClient.signIn.social({
             provider: 'spotify',
+            callbackURL: '/playlists',
           });
         }}
       >
