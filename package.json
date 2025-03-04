@@ -14,11 +14,13 @@
     "@react95/icons": "^2.1.1",
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "better-auth": "^1.1.21",
+    "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
     "next": "15.2.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
