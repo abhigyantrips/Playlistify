@@ -3,13 +3,17 @@
 import { Avatar, Button, Frame } from '@react95/core';
 import { Page, SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
 
+import { useRouter } from 'next/navigation';
+
 export default function PlaylistsPageClient({
   playlists,
 }: {
   playlists: Page<SimplifiedPlaylist>;
 }) {
+  const router = useRouter();
+
   return (
-    <div className="container m-10 mx-auto">
+    <div className="container mx-auto my-10">
       <Frame bgColor="$material" boxShadow="$out" className="p-8">
         <div className="space-y-2 px-2">
           <h1 className="text-2xl font-bold">Your Playlists</h1>
@@ -21,9 +25,8 @@ export default function PlaylistsPageClient({
           {playlists.items.map((playlist) => (
             <Button
               key={playlist.id}
-              bgColor="$material"
-              boxShadow="$out"
               className="flex items-center space-x-4 !p-2 !text-left"
+              onClick={() => router.push(`/playlists/${playlist.id}`)}
             >
               <Avatar
                 className="!h-16 !w-16 border-3 border-gray-400"

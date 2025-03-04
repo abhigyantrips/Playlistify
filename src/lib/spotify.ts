@@ -29,8 +29,6 @@ export async function spotify() {
     throw new Error('Missing user account data');
   }
 
-  console.log(userAccount.accessTokenExpiresAt!.getTime() - Date.now());
-
   const sdk = SpotifyApi.withAccessToken(runtimeEnv.SPOTIFY_CLIENT_ID, {
     access_token: userAccount.accessToken!,
     token_type: 'Bearer',

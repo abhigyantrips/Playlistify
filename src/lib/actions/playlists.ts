@@ -15,3 +15,10 @@ export async function getPlaylist({ id }: { id: string }) {
 
   return playlist;
 }
+
+export async function getPlaylistItems({ id }: { id: string }) {
+  const sdk = await spotify();
+  const playlistItems = await sdk.playlists.getPlaylistItems(id);
+
+  return playlistItems;
+}
