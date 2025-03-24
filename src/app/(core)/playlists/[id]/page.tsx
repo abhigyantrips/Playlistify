@@ -1,3 +1,4 @@
+import { getArtistGenres } from '@/lib/actions/artists';
 import { getPlaylist, getPlaylistItems } from '@/lib/actions/playlists';
 
 import PlaylistInfoPageClient from '@/app/(core)/playlists/[id]/page.client';
@@ -9,5 +10,16 @@ export default async function PlaylistInfoPage(props: {
   const playlist = await getPlaylist({ id });
   const tracks = await getPlaylistItems({ id });
 
-  return <PlaylistInfoPageClient playlist={playlist} tracks={tracks} />;
+  const artistIds = [
+    ...new Set(tracks.items.flatMap((t) => t.track.artists.map((a) => a.id))),
+  ];
+  const genres = await getArtistGenres(artistIds);
+
+  return (
+    <PlaylistInfoPageClient
+      playlist={playlist}
+      tracks={tracks}
+      genres={genres}
+    />
+  );
 }
