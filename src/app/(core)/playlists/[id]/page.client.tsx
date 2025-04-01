@@ -36,6 +36,16 @@ export default function PlaylistInfoPageClient({
   tracks: Page<PlaylistedTrack<Track>>;
   genres: { genre: string; count: number }[];
 }) {
+  // Separate the main tracks from recommendations (last 5)
+  const mainTracks = tracks.items.slice(0, -5);
+  const recommendedTracks = tracks.items.slice(-5);
+
+  // Create popularity data for the second chart
+  const popularityData = tracks.items.slice(0, 10).map((item) => ({
+    name: item.track.name,
+    value: item.track.popularity,
+  }));
+
   return (
     <div className="container mx-auto my-10">
       <Frame
@@ -66,7 +76,7 @@ export default function PlaylistInfoPageClient({
         <div className="flex flex-col xl:flex-row xl:justify-between xl:space-x-4">
           {/* Tracks list - full width by default, left side on xl */}
           <div className="order-2 mt-8 flex flex-col space-y-4 xl:order-1 xl:mt-0 xl:w-3/5">
-            {tracks.items.map((item, index) => {
+            {mainTracks.map((item, index) => {
               return (
                 <div
                   key={`${item.track.id}:${index}`}
@@ -90,75 +100,109 @@ export default function PlaylistInfoPageClient({
             })}
           </div>
 
-          {/* Charts - grid by default, stacked column on right for xl */}
-          <div className="order-1 grid grid-cols-2 gap-4 xl:order-2 xl:flex xl:flex-col">
+          {/* Charts and recommendations - right side */}
+          <div className="order-1 flex flex-col gap-4 xl:order-2">
+            {/* Charts section - grid on mobile, column on desktop */}
+            <div className="grid grid-cols-2 gap-4 xl:flex xl:flex-col">
+              <Frame
+                bgColor="$material"
+                boxShadow="$out"
+                className="flex min-h-[350px] flex-col items-center p-4 xl:min-h-[370px] xl:p-6"
+              >
+                <div className="flex w-full flex-col space-y-2">
+                  <h2 className="text-2xl font-bold">Playlist Genres</h2>
+                  <p className="text-lg text-gray-500">
+                    Includes all the genres fetched from playlist artists.
+                  </p>
+                </div>
+                <PieChart width={300} height={250}>
+                  <Pie
+                    data={genres}
+                    dataKey="count"
+                    nameKey="genre"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                  >
+                    {genres.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    labelClassName="font-bold"
+                    wrapperClassName="px-2 py-1 rounded-md"
+                  />
+                </PieChart>
+              </Frame>
+              <Frame
+                bgColor="$material"
+                boxShadow="$out"
+                className="flex min-h-[350px] flex-col items-center p-4 xl:min-h-[370px] xl:p-6"
+              >
+                <div className="flex w-full flex-col space-y-2">
+                  <h2 className="text-2xl font-bold">Track Popularity</h2>
+                  <p className="text-lg text-gray-500">
+                    Shows popularity ratings of the top tracks in this playlist.
+                  </p>
+                </div>
+                <PieChart width={300} height={250}>
+                  <Pie
+                    data={popularityData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                  >
+                    {popularityData.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    labelClassName="font-bold"
+                    wrapperClassName="px-2 py-1 rounded-md"
+                  />
+                </PieChart>
+              </Frame>
+            </div>
+
+            {/* Recommendations section */}
             <Frame
               bgColor="$material"
               boxShadow="$out"
-              className="flex min-h-[350px] flex-col items-center p-4 xl:min-h-[370px] xl:p-6"
+              className="flex flex-col p-4 xl:p-6"
             >
-              <div className="flex flex-col space-y-2">
-                <h2 className="text-2xl font-bold">Playlist Genres</h2>
-                <p className="text-lg text-gray-500">
-                  Includes all the genres fetched from playlist artists.
-                </p>
-              </div>
-              <PieChart width={300} height={250}>
-                <Pie
-                  data={genres}
-                  dataKey="count"
-                  nameKey="genre"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                >
-                  {genres.map((_, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
+              <h2 className="mb-4 text-2xl font-bold">Your Recommendations</h2>
+              <div className="flex flex-col space-y-4">
+                {recommendedTracks.map((item, index) => (
+                  <div
+                    key={`rec-${item.track.id}:${index}`}
+                    className="flex items-center space-x-4"
+                  >
+                    <Avatar
+                      src={item.track.album.images[0]?.url}
+                      alt={item.track.name}
+                      className="!h-12 !w-12 border-2 border-gray-400"
                     />
-                  ))}
-                </Pie>
-                <Tooltip
-                  labelClassName="font-bold"
-                  wrapperClassName="px-2 py-1 rounded-md"
-                />
-              </PieChart>
-            </Frame>
-            <Frame
-              bgColor="$material"
-              boxShadow="$out"
-              className="flex min-h-[350px] flex-col items-center p-4 xl:min-h-[370px] xl:p-6"
-            >
-              <div className="flex flex-col space-y-2">
-                <h2 className="text-2xl font-bold">Playlist Genres</h2>
-                <p className="text-lg text-gray-500">
-                  Includes all the genres fetched from playlist artists.
-                </p>
+                    <div className="space-y-1">
+                      <h3 className="text-base font-bold">{item.track.name}</h3>
+                      <p className="text-xs text-gray-500">
+                        {item.track.artists
+                          .map((artist) => artist.name)
+                          .join(', ')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <PieChart width={300} height={250}>
-                <Pie
-                  data={genres}
-                  dataKey="count"
-                  nameKey="genre"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                >
-                  {genres.map((_, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip
-                  labelClassName="font-bold"
-                  wrapperClassName="px-2 py-1 rounded-md"
-                />
-              </PieChart>
             </Frame>
           </div>
         </div>
